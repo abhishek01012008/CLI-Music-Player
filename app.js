@@ -9,6 +9,49 @@ let songs = [];
 let currentPlayer = null;
 let isPaused = false;
 
+process.stdin.on("data", (data) => {
+  if (data[0] === 0x1b && data[2] === 0x41) {
+    userChoice -= 1;
+    if (userChoice < 0) {
+      userChoice = songs.length - 1;
+    }
+    listsong();
+  }
+
+  if (data[0] === 0x1b && data[2] === 0x42) {
+    userChoice += 1;
+    if (userChoice >= songs.length) {
+      userChoice = 0;
+    }
+    listsong();
+  }
+
+});
+
+function playSong(songPath) {
+  if (currentPlayer) {
+    currentPlayer.kill();
+    currentPlayer = null;
+  }
+
+  currentPlayer = spawn("vlc", [
+    "--intf",
+    "dummy",
+    "--play-and-exit",
+    songPath
+  ]);
+
+  isPaused = false;
+
+}
+
+function stopSong() {
+  if (currentPlayer) {
+    currentPlayer.kill();
+    currentPlayer = null;
+  }
+  process.exit(0);
+}
 
 function listsong() {
   songs = fs.readdirSync(songDirectory);
