@@ -26,6 +26,62 @@ process.stdin.on("data", (data) => {
     listsong();
   }
 
+  if (data[0] === 0x0d) {
+    if (songs.length === 0) {
+      return;
+    }
+    const songPath = path.join(
+      songDirectory,
+      songs[userChoice]
+    );
+    playSong(songPath);
+  }
+
+
+    if (data[0] === 0x20) {
+        if (currentPlayer) {
+            if (isPaused) {
+            currentPlayer.kill("SIGCONT");
+            isPaused = false;
+            } 
+            else {
+            currentPlayer.kill("SIGSTOP");
+            isPaused = true;
+            }
+        }
+    }
+
+  if (data[0] === 0x6e) {
+    userChoice += 1;
+    if (userChoice >= songs.length) {
+      userChoice = 0;
+    }
+    const songPath = path.join(
+      songDirectory,
+      songs[userChoice]
+    );
+    playSong(songPath);
+    listsong();
+  }
+
+
+  if (data[0] === 0x70) {
+    userChoice -= 1;
+    if (userChoice < 0) {
+      userChoice = songs.length - 1;
+    }
+    const songPath = path.join(
+      songDirectory,
+      songs[userChoice]
+    );
+    playSong(songPath);
+    listsong();
+  }
+
+
+  if (data[0] === 0x03) {
+    stopSong();
+  }
 });
 
 function playSong(songPath) {
@@ -52,8 +108,8 @@ function stopSong() {
     currentPlayer = null;
   }
   process.exit(0);
-  
 }
+
 
 function listsong() {
   songs = fs.readdirSync(songDirectory);
