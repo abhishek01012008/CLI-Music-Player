@@ -32,6 +32,7 @@ function playSong(songPath) {
   if (currentPlayer) {
     currentPlayer.kill();
     currentPlayer = null;
+
   }
 
   currentPlayer = spawn("vlc", [
@@ -51,6 +52,7 @@ function stopSong() {
     currentPlayer = null;
   }
   process.exit(0);
+  
 }
 
 function listsong() {
